@@ -30,6 +30,6 @@ public class PriceSnapshot {
     @Column(name = "price", nullable = false)
     private BigDecimal price;
 
-    @Column(name = "timestamp", nullable = false)
-    private LocalDateTime timestamp;
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 }

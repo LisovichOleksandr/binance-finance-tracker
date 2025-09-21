@@ -16,3 +16,9 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.PostgreSQLDialect
         transaction.jta.platform: org.hibernate.engine.transaction.jta.platform.internal.NoJtaPlatform
+
+binance:
+  api:
+    key: ${BINANCE_API_KEY}
+  secret:
+    key: ${BINANCE_SECRET_KEY}
