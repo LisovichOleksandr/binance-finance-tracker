@@ -1,9 +1,13 @@
 package by.lisovich.binance_finance_tracker.binance;
 
+import jakarta.annotation.PostConstruct;
+import lombok.Data;
+import lombok.Setter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
+@Setter
 public class BinanceConfig {
 
     @Value("${binance.api.key}")
@@ -12,11 +16,17 @@ public class BinanceConfig {
     @Value("${binance.secret.key}")
     private String secretKey;
 
+    @PostConstruct
+    public void init() {
+        System.out.println("API Key = " + apiKey);
+        System.out.println("Secret Key = " + secretKey);
+    }
+
     public String getApiKey() {
-        return apiKey;
+        return this.apiKey;
     }
 
     public String getSecretKey() {
-        return secretKey;
+        return this.secretKey;
     }
 }
