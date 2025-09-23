@@ -8,11 +8,7 @@ import com.binance.connector.client.spot.rest.SpotRestApiUtil;
 import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import com.binance.connector.client.spot.rest.model.*;
 import lombok.AllArgsConstructor;
-import lombok.NoArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -20,22 +16,12 @@ public class BinanceServiceExamples {
 
     private final BinanceConfig binanceConfig;
 
-    public SpotRestApi connectSpot() {
-        ClientConfiguration clientConfiguration = SpotRestApiUtil.getClientConfiguration();
-        SignatureConfiguration signatureConfiguration = new SignatureConfiguration();
-        signatureConfiguration.setApiKey(binanceConfig.getApiKey());
-        signatureConfiguration.setSecretKey(binanceConfig.getSecretKey());
-        clientConfiguration.setSignatureConfiguration(signatureConfiguration);
-        return new SpotRestApi(clientConfiguration);
-    }
-
-
     public void depthExample() {
         String symbol = "BNBUSDT";
         Integer limit = 500;
 
-        ApiResponse<DepthResponse> depth = connectSpot().depth(symbol, limit);
-        ApiResponse<AvgPriceResponse> avgPrice = connectSpot().avgPrice(symbol);
+        ApiResponse<DepthResponse> depth = binanceConfig.connectSpot().depth(symbol, limit);
+        ApiResponse<AvgPriceResponse> avgPrice = binanceConfig.connectSpot().avgPrice(symbol);
 
         System.out.println(depth.getData());
         System.out.println(avgPrice.getData());
@@ -54,7 +40,7 @@ public class BinanceServiceExamples {
         String timeZone = null;
         Integer limit = 500;
         ApiResponse<KlinesResponse> response =
-                connectSpot().klines(symbol, interval, startTime, endTime, timeZone, limit);
+                binanceConfig.connectSpot().klines(symbol, interval, startTime, endTime, timeZone, limit);
         System.out.println(response.getData());
     }
 
@@ -66,7 +52,7 @@ public class BinanceServiceExamples {
         String symbol = "BNBUSDT";
         Symbols symbols = null;
         TickerType type = TickerType.FULL;
-        ApiResponse<Ticker24hrResponse> response = connectSpot().ticker24hr(symbol, symbols, type);
+        ApiResponse<Ticker24hrResponse> response = binanceConfig.connectSpot().ticker24hr(symbol, symbols, type);
         System.out.println(response.getData());
     }
 
@@ -77,7 +63,7 @@ public class BinanceServiceExamples {
     public void tickerBookTickerExample() throws ApiException {
         String symbol = "BNBUSDT";
         Symbols symbols = null;
-        ApiResponse<TickerBookTickerResponse> response = connectSpot().tickerBookTicker(symbol, symbols);
+        ApiResponse<TickerBookTickerResponse> response = binanceConfig.connectSpot().tickerBookTicker(symbol, symbols);
         System.out.println(response.getData());
     }
 
@@ -92,7 +78,7 @@ public class BinanceServiceExamples {
         Symbols symbols = null;
         WindowSize windowSize = WindowSize.WINDOW_SIZE_1m;
         TickerType type = TickerType.FULL;
-        ApiResponse<TickerResponse> response = connectSpot().ticker(symbol, symbols, windowSize, type);
+        ApiResponse<TickerResponse> response = binanceConfig.connectSpot().ticker(symbol, symbols, windowSize, type);
         System.out.println(response.getData());
     }
 
@@ -102,7 +88,7 @@ public class BinanceServiceExamples {
     public void tickerPriceExample() throws ApiException {
         String symbol = "BNBUSDT";
         Symbols symbols = null;
-        ApiResponse<TickerPriceResponse> response = connectSpot().tickerPrice(symbol, symbols);
+        ApiResponse<TickerPriceResponse> response = binanceConfig.connectSpot().tickerPrice(symbol, symbols);
         System.out.println(response.getData());
     }
 
@@ -115,7 +101,7 @@ public class BinanceServiceExamples {
         String timeZone = "";
         TickerType type = TickerType.FULL;
         ApiResponse<TickerTradingDayResponse> response =
-                connectSpot().tickerTradingDay(symbol, symbols, timeZone, type);
+                binanceConfig.connectSpot().tickerTradingDay(symbol, symbols, timeZone, type);
         System.out.println(response.getData());
     }
 
@@ -132,7 +118,7 @@ public class BinanceServiceExamples {
         String timeZone = null;
         Integer limit = 500;
         ApiResponse<UiKlinesResponse> response =
-                connectSpot().uiKlines(symbol, interval, startTime, endTime, timeZone, limit);
+                binanceConfig.connectSpot().uiKlines(symbol, interval, startTime, endTime, timeZone, limit);
         System.out.println(response.getData());
     }
 }

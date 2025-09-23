@@ -1,5 +1,9 @@
 package by.lisovich.binance_finance_tracker.binance;
 
+import com.binance.connector.client.common.configuration.ClientConfiguration;
+import com.binance.connector.client.common.configuration.SignatureConfiguration;
+import com.binance.connector.client.spot.rest.SpotRestApiUtil;
+import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import jakarta.annotation.PostConstruct;
 import lombok.Data;
 import lombok.Setter;
@@ -28,5 +32,14 @@ public class BinanceConfig {
 
     public String getSecretKey() {
         return this.secretKey;
+    }
+
+    public SpotRestApi connectSpot() {
+        ClientConfiguration clientConfiguration = SpotRestApiUtil.getClientConfiguration();
+        SignatureConfiguration signatureConfiguration = new SignatureConfiguration();
+        signatureConfiguration.setApiKey(this.getApiKey());
+        signatureConfiguration.setSecretKey(this.getSecretKey());
+        clientConfiguration.setSignatureConfiguration(signatureConfiguration);
+        return new SpotRestApi(clientConfiguration);
     }
 }
