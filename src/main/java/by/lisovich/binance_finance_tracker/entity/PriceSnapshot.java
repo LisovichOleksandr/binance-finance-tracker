@@ -2,6 +2,7 @@ package by.lisovich.binance_finance_tracker.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -15,6 +16,7 @@ import java.time.LocalDateTime;
 @Entity
 @Table(name = "prices")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class PriceSnapshot {
