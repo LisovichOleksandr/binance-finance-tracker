@@ -7,6 +7,7 @@ import by.lisovich.binance_finance_tracker.repository.PriceSnapshotRepository;
 import by.lisovich.binance_finance_tracker.repository.SymbolRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -21,15 +22,14 @@ public class PriceSnapshotService {
     private final BinanceService binanceService;
 
     @Transactional
-    public void savePriceToDB() {
-        String symbol = "BNBUSDT";
-        Symbol bySymbol = symbolRepository.findBySymbol(symbol);
+    public PriceSnapshot fetchAndSavePrice(String symbol) {
+        Symbol bySymbol = symbolRepository.findBySymbol(symbol)
+                .orElseThrow(() -> new IllegalStateException("Unknown symbol: " + symbol));
         PriceSnapshot price = PriceSnapshot.builder()
                 .symbol(bySymbol)
                 .price(binanceService.tickerPrice(symbol))
                 .createdAt(LocalDateTime.now())
                 .build();
-        priceSnapshotRepository.save(price);
-        //TODO write @Scheduler
+        return priceSnapshotRepository.save(price);
     }
 }
