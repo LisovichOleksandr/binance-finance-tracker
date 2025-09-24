@@ -17,6 +17,8 @@ public class PriceUpdateScheduler {
     private final PriceSnapshotService priceSnapshotService;
     private final SymbolRepository symbolRepository;
 
+// Todo Change SymbolRepository on SymbolService
+
     @Scheduled(fixedRateString = "${prices.snapshot.rate:60000}" )
     public void collectPrice() {
         List<Symbol> symbols = symbolRepository.findAll();
