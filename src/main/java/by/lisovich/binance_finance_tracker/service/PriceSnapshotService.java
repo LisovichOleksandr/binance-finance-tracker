@@ -32,4 +32,8 @@ public class PriceSnapshotService {
                 .build();
         return priceSnapshotRepository.save(price);
     }
+
+    public PriceSnapshot findLatestPrice(String symbol) {
+        return priceSnapshotRepository.findLatestPriceBySymbol(symbol);
+    }
 }
