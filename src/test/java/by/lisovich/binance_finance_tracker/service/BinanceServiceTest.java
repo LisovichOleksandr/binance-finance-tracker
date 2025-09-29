@@ -9,7 +9,11 @@ import com.binance.connector.client.spot.rest.model.TickerPriceResponse1;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
 
@@ -18,24 +22,15 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
 
+@ExtendWith(MockitoExtension.class)
 class BinanceServiceTest {
 
-    private BinanceService binanceService;
-    private SpotRestApi spotRestApi;
-    private BinanceConfig binanceConfig;
-
-    @BeforeEach
-    void setUp() {
-        binanceConfig = mock(BinanceConfig.class);
-        spotRestApi = mock(SpotRestApi.class);
-
-        Mockito.when(binanceConfig.connectSpot()).thenReturn(spotRestApi);
-
-        binanceService = new BinanceService(binanceConfig);
-    }
+    @Mock private BinanceConfig binanceConfig;
+    @Mock private SpotRestApi spotRestApi;
+    @InjectMocks private BinanceService binanceService;
 
     @Test
-    void shouldCallMethodTickerPrice() {
+    void shouldReturnCorrectPriceWhenTickerPriceCalled() {
         String symbol = "BNBUSDT";
 
         TickerPriceResponse1 innerResponse = new TickerPriceResponse1();
@@ -46,13 +41,16 @@ class BinanceServiceTest {
 
         ApiResponse<TickerPriceResponse> apiResponse = mock(ApiResponse.class);
         when(apiResponse.getData()).thenReturn(responseWrapper);
-        when(spotRestApi.tickerPrice(eq("BNBUSDT"), any(Symbols.class))).thenReturn(apiResponse);
+
+        when(binanceConfig.connectSpot()).thenReturn(spotRestApi);
+        when(spotRestApi.tickerPrice(eq("BNBUSDT"), isNull())).thenReturn(apiResponse);
+
 
         BigDecimal result = binanceService.tickerPrice("BNBUSDT");
 
         assertEquals(new BigDecimal("123.45"), result);
 
-        verify(spotRestApi, times(1)).tickerPrice(eq("BNBUSDT"), any(Symbols.class));
+        verify(spotRestApi, times(1)).tickerPrice(eq("BNBUSDT"), isNull());
     }
-    //TODO The test is not working
+
 }
