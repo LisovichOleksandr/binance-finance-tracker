@@ -2,6 +2,7 @@ package by.lisovich.binance_finance_tracker.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import lombok.NoArgsConstructor;
 @Entity
 @Table(name = "symbols")
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Symbol {
