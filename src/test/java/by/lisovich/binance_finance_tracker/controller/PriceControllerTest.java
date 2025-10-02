@@ -1,5 +1,6 @@
 package by.lisovich.binance_finance_tracker.controller;
 
+import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
 import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
@@ -21,12 +22,16 @@ class PriceControllerTest {
 
     @Test
     void shouldReturn200AndNotEmpty() throws Exception {
-        this.mockMvc.perform(get("/api/symbols")).andDo(print()).andExpect(status().isOk())
+        this.mockMvc.perform(get("/api/symbols")).andDo(print())
+                .andExpect(status().isOk())
                 .andExpect(jsonPath("$.length()").value(Matchers.greaterThan(0)));
     }
 
     @Test
-    void getLatestPrice() {
+    void shouldReturnLatestPrice() throws Exception {
+        this.mockMvc.perform(get("/api/prices/BNBUSDT/latest")).andDo(print())
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.symbol.symbol").value("BNBUSDT"));
     }
 }
 
