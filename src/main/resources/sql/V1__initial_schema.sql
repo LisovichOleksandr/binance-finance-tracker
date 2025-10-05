@@ -4,8 +4,11 @@ CREATE TABLE users (
     password_hash VARCHAR(255) NOT NULL,
     email VARCHAR(100) NOT NULL,
     binance_api_key VARCHAR(255),
-    binance_secret_key VARCHAR(255)
+    binance_secret_key VARCHAR(255),
 );
+ALTER TABLE users ADD COLUMN created_at TIMESTAMP not null default current_timestamp;
+ALTER TABLE users ADD COLUMN updated_at TIMESTAMP;
+
 
 CREATE TABLE symbols (
     id BIGSERIAL PRIMARY KEY,
