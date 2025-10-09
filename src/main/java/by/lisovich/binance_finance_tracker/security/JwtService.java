@@ -1,4 +1,4 @@
-package by.lisovich.binance_finance_tracker.service;
+package by.lisovich.binance_finance_tracker.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
