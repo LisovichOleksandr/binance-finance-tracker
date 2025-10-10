@@ -1,5 +1,6 @@
-package by.lisovich.binance_finance_tracker.security;
+package by.lisovich.binance_finance_tracker.security.config;
 
+import by.lisovich.binance_finance_tracker.security.filter.JwtAuthenticationFilter;
 import lombok.AllArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

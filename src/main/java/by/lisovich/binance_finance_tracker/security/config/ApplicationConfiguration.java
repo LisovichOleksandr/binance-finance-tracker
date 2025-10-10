@@ -1,4 +1,4 @@
-package by.lisovich.binance_finance_tracker.security;
+package by.lisovich.binance_finance_tracker.security.config;
 
 import by.lisovich.binance_finance_tracker.repository.UserRepository;
 import lombok.AllArgsConstructor;

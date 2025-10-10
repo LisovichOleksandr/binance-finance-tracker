@@ -1,5 +1,6 @@
-package by.lisovich.binance_finance_tracker.security;
+package by.lisovich.binance_finance_tracker.security.filter;
 
+import by.lisovich.binance_finance_tracker.security.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

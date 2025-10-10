@@ -5,8 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class RegisterUserDto {
-    private String email;
-    private String password;
-    private String fullName;
+public class LoginResponse {
+    private String token;
+    private long expiresIn;
 }
