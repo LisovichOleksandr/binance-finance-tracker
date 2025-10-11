@@ -23,13 +23,7 @@ public class AuthenticationController {
     public ResponseEntity<UserDto> register(@RequestBody RegisterUserDto input) {
         User registeredUser = authenticationService.singUp(input);
 
-        return ResponseEntity.ok(UserDto.builder()
-                        .id(registeredUser.getId())
-                        .username(registeredUser.getUsername())
-                        .email(registeredUser.getEmail())
-                        .createdAt(registeredUser.getCreatedAt())
-                        .updatedAt(registeredUser.getUpdatedAt())
-                .build());
+        return ResponseEntity.ok(new UserDto(registeredUser));
     }
 
     @PostMapping("/login")
