@@ -5,6 +5,8 @@ import by.lisovich.binance_finance_tracker.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -17,5 +19,9 @@ public class UserService {
 
     public User save(User embedUser) {
         return userRepository.save(embedUser);
+    }
+
+    public List<User> getAllUsers() {
+        return userRepository.findAll();
     }
 }

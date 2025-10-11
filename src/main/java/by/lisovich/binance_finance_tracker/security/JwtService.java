@@ -1,8 +1,9 @@
-package by.lisovich.binance_finance_tracker.service;
+package by.lisovich.binance_finance_tracker.security;
 
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,10 @@ import java.util.function.Function;
 
 @Service
 public class JwtService {
-    @Value("${security.jwt.secret-key}")
+    @Value("${spring.security.jwt.secret-key}")
     private String secretKey;
 
-    @Value("${security.jwt.expiration-time}")
+    @Value("${spring.security.jwt.expiration-time}")
     private long jwtExpiration;
 
     private String getSecretKey() {
@@ -66,6 +67,12 @@ public class JwtService {
                 .expiration(accessExpiration)
                 .signWith(getSignedKey())
                 .compact();
+
+    }
+
+    public boolean isTokenValid(String token, UserDetails userDetails) {
+        String userName = extractUserName(token);
+        return (userName.equals(userDetails.getUsername()) && !isTokenExpired(token));
 
     }
 
