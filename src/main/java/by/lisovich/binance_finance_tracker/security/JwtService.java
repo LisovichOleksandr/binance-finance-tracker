@@ -3,7 +3,6 @@ package by.lisovich.binance_finance_tracker.security;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import lombok.AllArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
@@ -29,7 +28,8 @@ public class JwtService {
     private String getSecretKey() {
         return this.secretKey;
     }
-    
+
+    // Note: In our app, username represents user's email
     public String extractUserName(String token) {
         return extractClaim(token, Claims::getSubject);
     }
@@ -85,15 +85,14 @@ public class JwtService {
     }
 
     public Claims extractAllClaims(String token) {
-        Jwt<?, ?> parse;
         try {
-            parse = Jwts.parser()
+            return Jwts.parser()
                     .verifyWith((SecretKey) getSignedKey())
                     .build()
-                    .parse(token);
-            return (Claims) parse;
+                    .parseSignedClaims(token)
+                    .getPayload();
         } catch (JwtException ex) {
-            throw new RuntimeException("we *cannot* use the JWT as intended by its creator");
+            throw new RuntimeException("Can`t parse JWT: " + ex.getMessage(), ex);
             //TODO to find out what exception is thrown in this case
         }
     }
