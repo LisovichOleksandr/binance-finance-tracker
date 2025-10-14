@@ -21,11 +21,17 @@ public class UserController {
     private UserService userService;
 
     @GetMapping("/me")
-    public ResponseEntity<UserDto> authenticatedUser() {
+    public ResponseEntity<?> authenticatedUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User currentUser = (User) authentication.getPrincipal();
+        System.out.printf("Principal" + authentication.getPrincipal());
+        System.out.printf("Principal class" + authentication.getPrincipal().getClass());
+        Object principal = authentication.getPrincipal();
 
-        return ResponseEntity.ok(new UserDto(currentUser));
+        if (principal instanceof User user) {
+            return ResponseEntity.ok(new UserDto(user));
+        } else {
+            return ResponseEntity.ok("unexpected principal type" + principal.getClass());
+        }
     }
 
     @GetMapping("/")
