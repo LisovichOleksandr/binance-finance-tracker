@@ -27,9 +27,9 @@ class JwtServiceTest {
         jwtExpiration.set(jwtService, 60L);
 
         userDetails = User.builder()
-                .username("wrongUser")
+                .username("testUser")
                 .passwordHash("pass")
-                .email("wrong@email.li")
+                .email("test@email.li")
                 .build();
     }
 
@@ -39,8 +39,20 @@ class JwtServiceTest {
 
         assertNotNull(token);
         assertTrue(jwtService.isTokenValid(token, userDetails));
-        assertEquals("wrong@email.li", jwtService.extractUserName(token));
+        assertEquals("test@email.li", jwtService.extractUserName(token));
+    }
 
+    @Test
+    void shouldDetectInvalidUsername() {
+        String token = jwtService.generateToken(userDetails);
+
+        UserDetails anotherUser = User.builder()
+                .username("wrongUser")
+                .passwordHash("pass")
+                .email("wrong@email.li")
+                .build();
+
+        assertFalse(jwtService.isTokenValid(token, anotherUser));
     }
 
 
