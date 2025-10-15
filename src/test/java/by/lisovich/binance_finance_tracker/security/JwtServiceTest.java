@@ -67,6 +67,20 @@ class JwtServiceTest {
         assertEquals("ADMIN", claims.get("role"));
     }
 
+    @Test
+    void shouldThrownExceptionOnInvalidToken() {
+        String invalidToken = "asd.erw.fdg";
+
+        RuntimeException runtimeException = assertThrows(RuntimeException.class,
+                () -> jwtService.extractAllClaims(invalidToken));
+
+        assertTrue(runtimeException.getMessage().contains("Can`t parse JWT"));
+    }
+
+    @Test
+    void shouldDetectExpiredToken() {
+
+    }
 
 
 
