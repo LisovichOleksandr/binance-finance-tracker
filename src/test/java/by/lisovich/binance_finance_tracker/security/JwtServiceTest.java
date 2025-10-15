@@ -1,11 +1,13 @@
 package by.lisovich.binance_finance_tracker.security;
 
 import by.lisovich.binance_finance_tracker.entity.User;
+import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.lang.reflect.Field;
+import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -55,6 +57,15 @@ class JwtServiceTest {
         assertFalse(jwtService.isTokenValid(token, anotherUser));
     }
 
+    @Test
+    void shouldExtractClaims() {
+        String token = jwtService.generateToken(Map.of("role", "ADMIN"), userDetails);
+
+        Claims claims = jwtService.extractAllClaims(token);
+
+        assertEquals("test@email.li", claims.getSubject());
+        assertEquals("ADMIN", claims.get("role"));
+    }
 
 
 
