@@ -91,6 +91,11 @@ public class JwtService {
                     .build()
                     .parseSignedClaims(token)
                     .getPayload();
+        } catch (ExpiredJwtException ex) {
+            /**
+             * Коли токен протухший повертаемо клаймси, но можна ловити цю помилку в Фільтрі.
+             * */
+          return ex.getClaims();
         } catch (JwtException ex) {
             throw new RuntimeException("Can`t parse JWT: " + ex.getMessage(), ex);
             //TODO to find out what exception is thrown in this case
