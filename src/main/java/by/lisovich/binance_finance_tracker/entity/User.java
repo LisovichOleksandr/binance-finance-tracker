@@ -12,6 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -35,6 +36,10 @@ public class User implements UserDetails {
 
     @Column(name = "email", nullable = false)
     private String email;
+
+    @OneToMany(fetch = FetchType.LAZY)
+    @JoinColumn(name = "role_id")
+    private List<Role> roles;
 
     @Column(name = "binance_api_key")
     private String binanceApiKey;
