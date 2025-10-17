@@ -10,7 +10,7 @@ ALTER TABLE users ADD COLUMN created_at TIMESTAMP not null default current_times
 ALTER TABLE users ADD COLUMN updated_at TIMESTAMP;
 
 --add new table role. migration script
-CREATE TABLE role (
+CREATE TABLE roles (
     id BIGSERIAL PRIMARY KEY,
     role VARCHAR(20) NOT NULL UNIQUE
 );
@@ -18,7 +18,7 @@ CREATE TABLE role (
 CREATE TABLE user_roles (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    role_id BIGINT NOT NULL REFERENCES role(id) ON DELETE CASCADE
+    role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE
 );
 --
 
