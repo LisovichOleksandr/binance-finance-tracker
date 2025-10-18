@@ -5,13 +5,10 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL,
     binance_api_key VARCHAR(255),
     binance_secret_key VARCHAR(255),
-    created_at TIMESTAMP NOT NULL DEFAULT current_timestamp,
+    created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMP
 );
---ALTER TABLE users ADD COLUMN created_at TIMESTAMP not null default current_timestamp;
---ALTER TABLE users ADD COLUMN updated_at TIMESTAMP;
 
---add new table role. migration script
 CREATE TABLE roles (
     id BIGSERIAL PRIMARY KEY,
     role VARCHAR(20) NOT NULL UNIQUE
@@ -22,7 +19,6 @@ CREATE TABLE user_roles (
     user_id BIGINT NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     role_id BIGINT NOT NULL REFERENCES roles(id) ON DELETE CASCADE
 );
---
 
 CREATE TABLE symbols (
     id BIGSERIAL PRIMARY KEY,
@@ -42,10 +38,10 @@ CREATE TABLE orders (
     id BIGSERIAL PRIMARY KEY,
     user_id BIGINT NOT NULL REFERENCES users(id),
     symbol_id BIGINT NOT NULL REFERENCES symbols(id),
-    side VARCHAR(4) NOT NULL,        -- BUY / SELL
+    side VARCHAR(4) NOT NULL,
     quantity NUMERIC(20,8) NOT NULL,
     price NUMERIC(20,8) NOT NULL,
-    status VARCHAR(20) NOT NULL,     -- NEW / FILLED / CANCELED
+    status VARCHAR(20) NOT NULL,
     created_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
