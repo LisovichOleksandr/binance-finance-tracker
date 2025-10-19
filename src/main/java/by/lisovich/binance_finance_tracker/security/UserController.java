@@ -34,7 +34,7 @@ public class UserController {
         }
     }
 
-    @GetMapping("/")
+    @GetMapping("/u")
     public ResponseEntity<List<UserDto>> AllUsers() {
         List<UserDto> users = userService.getAllUsers().stream().map(UserDto::new).collect(Collectors.toList());
 

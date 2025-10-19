@@ -39,6 +39,7 @@ public class AuthenticationService {
     }
 
     public User authenticate(LoginUserDto input) {
+
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         input.getEmail(),
