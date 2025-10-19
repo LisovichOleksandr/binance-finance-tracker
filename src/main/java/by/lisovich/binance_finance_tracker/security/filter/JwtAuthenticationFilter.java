@@ -34,10 +34,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             @NonNull FilterChain filterChain)
             throws ServletException, IOException {
         final String authHeader = request.getHeader("Authorization");
-//        if (request.getServletPath().startsWith("/auth/")) {
-//            doFilter(request, response);
-//            return;
-//        }
 
         if (request.getServletPath().startsWith("/auth/") || authHeader == null || !authHeader.startsWith("Bearer")){
             filterChain.doFilter(request, response);
@@ -45,14 +41,13 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         try {
-            String jwt = authHeader.substring(7);
-            String userEmail = jwtService.extractUserName(jwt);
-
+            String jwtToken = authHeader.substring(7);
+            String userEmail = jwtService.extractUserName(jwtToken);
             Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
             if (userEmail != null && authentication == null) {
                 UserDetails userDetails = this.userDetailsService.loadUserByUsername(userEmail);
-                if (jwtService.isTokenValid(jwt, userDetails)) {
+                if (jwtService.isTokenValid(jwtToken, userDetails)) {
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(
                             userDetails,
                             null,
@@ -64,7 +59,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
             }
             filterChain.doFilter(request, response);
         } catch (Exception e) {
-            handlerExceptionResolver.resolveException(request, response, null, e);
+            response.sendError(HttpServletResponse.SC_FORBIDDEN, "Invalid or expired token.");
         }
     }
 }

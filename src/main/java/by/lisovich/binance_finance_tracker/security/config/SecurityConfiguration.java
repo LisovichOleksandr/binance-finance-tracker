@@ -26,8 +26,9 @@ import java.util.List;
 @EnableWebSecurity
 @AllArgsConstructor
 public class SecurityConfiguration  {
-    private final AuthenticationProvider authenticationProvider;
+
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final AuthenticationProvider authenticationProvider;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
@@ -35,31 +36,15 @@ public class SecurityConfiguration  {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
-                        .requestMatchers("/users/**").hasRole("USER")
-                        .anyRequest().authenticated()
+                                .requestMatchers("/auth/**").permitAll()
+//                        .requestMatchers("/users/**").hasAnyAuthority("USER", "ADMIN") //.hasRole("ROLE_USER")
+                                .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
         return httpSecurity.build();
     }
-//    @Bean
-//    public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception{
-//        httpSecurity.csrf()
-//                .disable()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/auth/**")
-//                .permitAll()
-//                .anyRequest()
-//                .authenticated()
-//                .and()
-//                .sessionManagement()
-//                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-//                .and()
-//                .authenticationProvider(authenticationProvider)
-//                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
-//        return httpSecurity.build();
-//    }
 
     @Bean
     CorsConfigurationSource corsConfigurationSource() {
