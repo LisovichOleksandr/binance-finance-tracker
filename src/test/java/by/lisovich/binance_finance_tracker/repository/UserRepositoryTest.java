@@ -2,37 +2,75 @@ package by.lisovich.binance_finance_tracker.repository;
 
 import by.lisovich.binance_finance_tracker.entity.User;
 import jakarta.transaction.Transactional;
-import org.junit.jupiter.api.Assertions;
+import org.flywaydb.core.Flyway;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.context.ActiveProfiles;
 
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import javax.sql.DataSource;
 
-@SpringBootTest
+import static org.assertj.core.api.Assertions.*;
+
+@SpringBootTest(properties = "spring.config.location=classpath:application-test.yml")
+@ActiveProfiles("test")
+@TestInstance(TestInstance.Lifecycle.PER_CLASS)
 class UserRepositoryTest {
 
+    @Autowired private UserRepository userRepository;
+    @Autowired private Flyway flyway;
+
     @Autowired
-    private UserRepository userRepository;
+    private DataSource dataSource;
+
+    @BeforeEach
+    void cleanAndMigration() {
+        flyway.clean();
+        flyway.migrate();
+    }
 
     @Test
-    @Transactional
-    void shouldInsertAndReadUser() {
-//        //given
-//        User testUser = new User(null, "testuser", "pass", "test@email.com", null, null);
-//        userRepository.save(testUser);
-//
-//        //when
-//        List<User> users = userRepository.findAll();
-//
-//        //then
-//        Assertions.assertFalse(users.isEmpty());
-//        List<User> testuser = users.stream().filter(user -> user.getUsername().equals("testuser")).collect(Collectors.toList());
-//        Assertions.assertEquals("testuser", testuser.get(0).getUsername());
-        //TODO Rewrite this test. Sawed but don`t delete after test.
+    void checkDataSource() throws Exception {
+        System.out.println(">>> DS = " + dataSource.getConnection().getMetaData().getURL());
+    }
+
+    @Test
+    void UserRepository_findByEmail_ReturnUser() {
+        //given
+        User testUser = User.builder()
+                .username("testuser")
+                .passwordHash("pass")
+                .email("test@email.com")
+                .build();
+        userRepository.save(testUser);
+
+        //when
+        User user = userRepository.findByEmail("test@email.com").orElseThrow();
+
+        //then
+        assertThat(user).isNotNull();
+        assertThat(user.getUsername()).isEqualTo("test@email.com");
+        assertThat(user.getFirstName()).isEqualTo("testuser");
+        assertThat(user.getPasswordHash()).isEqualTo("pass");
+    }
+
+    @Test
+    void UserRepository_SaveAll_ReturnSavedUser() {
+        //given
+        User testUser = User.builder()
+                .email("test@email.com")
+                .username("testuser")
+                .passwordHash("pass").build();
+
+        //when
+        User savedUser = userRepository.save(testUser);
+
+        //then
+        assertThat(savedUser).isNotNull();
+        assertThat(savedUser.getId()).isGreaterThan(0);
+        assertThat(savedUser.getUsername()).isEqualTo("test@email.com");
     }
 }
