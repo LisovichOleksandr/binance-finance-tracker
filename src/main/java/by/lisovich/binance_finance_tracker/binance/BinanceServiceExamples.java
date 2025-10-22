@@ -2,19 +2,45 @@ package by.lisovich.binance_finance_tracker.binance;
 
 import com.binance.connector.client.common.ApiException;
 import com.binance.connector.client.common.ApiResponse;
-import com.binance.connector.client.common.configuration.ClientConfiguration;
-import com.binance.connector.client.common.configuration.SignatureConfiguration;
-import com.binance.connector.client.spot.rest.SpotRestApiUtil;
-import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import com.binance.connector.client.spot.rest.model.*;
 import lombok.AllArgsConstructor;
 import org.springframework.stereotype.Service;
+
+
+
 
 @Service
 @AllArgsConstructor
 public class BinanceServiceExamples {
 
     private final BinanceConfig binanceConfig;
+
+
+    /**
+     * Расшифровка полей:
+     * Поле	Тип	Значение	Описание
+     * a	Long	445869788	ID агрегированной сделки (aggregate tradeId) — уникальный идентификатор этой записи.
+     * p	String	"278.30000000"	Цена, по которой произошла сделка.
+     * q	String	"0.09700000"	Количество (quantity), объём сделки в базовой валюте (например, BNB).
+     * f	Long	582795457	Первый tradeId — ID первой обычной сделки, вошедшей в эту агрегированную.
+     * l	Long	582795457	Последний tradeId — ID последней обычной сделки, вошедшей в агрегированную. (Если f == l, то это одна сделка).
+     * T	Long	1662076802582	Время сделки (timestamp) в миллисекундах (Unix Time).
+     * m	boolean	true	Покупатель — маркет-мейкер? Если true, значит сделка была инициирована продавцом (sell order). Если false, инициатор — покупатель.
+     * M	boolean	true	Не используется (всегда true в Spot API, зарезервировано для фьючерсов).
+     * */
+    public AggTradesResponse aggTrades(String symbol, Integer limit) {
+//        String symbol = "BNBUSDT";
+        Long fromId = 1L;
+        Long startTime = 1735693200000L;
+        Long endTime = 1735693200000L;
+//        Integer limit = 1;
+
+        ApiResponse<AggTradesResponse> response = binanceConfig.connectSpot()
+                .aggTrades(symbol, null, null, null, limit);
+
+        AggTradesResponse data = response.getData();
+        return data;
+    }
 
     public void depthExample() {
         String symbol = "BNBUSDT";
@@ -41,7 +67,8 @@ public class BinanceServiceExamples {
         Integer limit = 500;
         ApiResponse<KlinesResponse> response =
                 binanceConfig.connectSpot().klines(symbol, interval, startTime, endTime, timeZone, limit);
-        System.out.println(response.getData());
+        KlinesResponse data = response.getData();
+        System.out.println(data);
     }
 
 

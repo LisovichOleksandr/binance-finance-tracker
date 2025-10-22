@@ -39,3 +39,7 @@ binance:
     key: ${BINANCE_API_KEY}
   secret:
     key: ${BINANCE_SECRET_KEY}
+
+logging:
+  level:
+    org.springframework.security.web.FilterChainProxy: DEBUG

@@ -10,6 +10,9 @@ import by.lisovich.binance_finance_tracker.repository.SymbolRepository;
 import by.lisovich.binance_finance_tracker.repository.UserRepository;
 import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
+import com.binance.connector.client.spot.rest.api.AccountApi;
+import com.binance.connector.client.spot.rest.model.AggTradesResponse;
+import com.binance.connector.client.spot.rest.model.AggTradesResponseInner;
 import lombok.AllArgsConstructor;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -22,14 +25,14 @@ import java.util.Set;
 @AllArgsConstructor
 public class BinanceExampleTester implements CommandLineRunner {
 
-//    private final UserRepository userRepository;
+    private final BinanceServiceExamples binanceService;
 
     @Override
     public void run(String... args) throws Exception {
 
-//        List<User> all = userRepository.findAll();
-//
-//        all.get(0).getRoles().stream().forEach(System.out::println);
+//        AggTradesResponse response = binanceService.aggTrades();
 
+//        for (AggTradesResponseInner aggTradesResponseInner : response) {
+//            System.out.println("Id = "+aggTradesResponseInner);
+        }
     }
-}
