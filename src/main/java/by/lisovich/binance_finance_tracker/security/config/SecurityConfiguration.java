@@ -36,7 +36,8 @@ public class SecurityConfiguration  {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
-                                .requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/auth/**", "/error").permitAll()
+                        // TODO настроїти провірку прав (авторизацію) по ролях
 //                        .requestMatchers("/users/**").hasAnyAuthority("USER", "ADMIN") //.hasRole("ROLE_USER")
                                 .anyRequest().authenticated()
                 )
