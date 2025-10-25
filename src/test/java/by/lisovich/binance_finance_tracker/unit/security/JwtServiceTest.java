@@ -1,6 +1,7 @@
-package by.lisovich.binance_finance_tracker.security;
+package by.lisovich.binance_finance_tracker.unit.security;
 
 import by.lisovich.binance_finance_tracker.entity.User;
+import by.lisovich.binance_finance_tracker.security.JwtService;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.junit.jupiter.api.BeforeEach;

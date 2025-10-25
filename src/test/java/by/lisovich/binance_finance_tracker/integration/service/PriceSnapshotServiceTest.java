@@ -1,9 +1,11 @@
-package by.lisovich.binance_finance_tracker.service;
+package by.lisovich.binance_finance_tracker.integration.service;
 
 import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
 import by.lisovich.binance_finance_tracker.entity.Symbol;
 import by.lisovich.binance_finance_tracker.repository.PriceSnapshotRepository;
 import by.lisovich.binance_finance_tracker.repository.SymbolRepository;
+import by.lisovich.binance_finance_tracker.service.BinanceService;
+import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -23,10 +25,12 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PriceSnapshotServiceTest {
 
-    @Mock BinanceService binanceService;
+    @Mock
+    BinanceService binanceService;
     @Mock SymbolRepository symbolRepository;
     @Mock PriceSnapshotRepository priceSnapshotRepository;
-    @InjectMocks PriceSnapshotService priceSnapshotService;
+    @InjectMocks
+    PriceSnapshotService priceSnapshotService;
 
     @Test
     void shouldFetchSymbolAndPriceThenSavePrice() {

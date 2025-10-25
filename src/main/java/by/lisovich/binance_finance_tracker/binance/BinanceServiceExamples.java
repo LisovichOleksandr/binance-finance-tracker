@@ -16,6 +16,11 @@ public class BinanceServiceExamples {
     private final BinanceConfig binanceConfig;
 
 
+    public AvgPriceResponse avgPrice(String symbol) {
+        AvgPriceResponse avgPriceResponse = binanceConfig.connectSpot().avgPrice(symbol).getData();
+        return avgPriceResponse;
+    }
+
     /**
      * Расшифровка полей:
      * Поле	Тип	Значение	Описание
@@ -148,4 +153,6 @@ public class BinanceServiceExamples {
                 binanceConfig.connectSpot().uiKlines(symbol, interval, startTime, endTime, timeZone, limit);
         System.out.println(response.getData());
     }
+
+
 }

@@ -1,10 +1,7 @@
-package by.lisovich.binance_finance_tracker.controller;
+package by.lisovich.binance_finance_tracker.integration.controller;
 
-import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
-import org.hamcrest.Matcher;
 import org.hamcrest.Matchers;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;

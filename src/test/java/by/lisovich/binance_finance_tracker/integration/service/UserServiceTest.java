@@ -1,7 +1,8 @@
-package by.lisovich.binance_finance_tracker.service;
+package by.lisovich.binance_finance_tracker.integration.service;
 
 import by.lisovich.binance_finance_tracker.entity.User;
 import by.lisovich.binance_finance_tracker.repository.UserRepository;
+import by.lisovich.binance_finance_tracker.service.UserService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;

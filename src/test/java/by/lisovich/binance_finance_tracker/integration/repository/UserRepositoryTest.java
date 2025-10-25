@@ -1,6 +1,7 @@
-package by.lisovich.binance_finance_tracker.repository;
+package by.lisovich.binance_finance_tracker.integration.repository;
 
 import by.lisovich.binance_finance_tracker.entity.User;
+import by.lisovich.binance_finance_tracker.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import org.flywaydb.core.Flyway;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,6 +1,7 @@
-package by.lisovich.binance_finance_tracker.service;
+package by.lisovich.binance_finance_tracker.integration.service;
 
 import by.lisovich.binance_finance_tracker.binance.BinanceConfig;
+import by.lisovich.binance_finance_tracker.service.BinanceService;
 import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import com.binance.connector.client.spot.rest.model.TickerPriceResponse;
