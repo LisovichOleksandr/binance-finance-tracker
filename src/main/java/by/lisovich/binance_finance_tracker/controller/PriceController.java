@@ -1,11 +1,12 @@
 package by.lisovich.binance_finance_tracker.controller;
 
-import by.lisovich.binance_finance_tracker.binance.BinanceServiceExamples;
 import by.lisovich.binance_finance_tracker.binance.dto.AggTradesResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
 import by.lisovich.binance_finance_tracker.controller.dto.PriceDto;
 import by.lisovich.binance_finance_tracker.controller.dto.SymbolDto;
 import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
 import by.lisovich.binance_finance_tracker.entity.Symbol;
+import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
 import com.binance.connector.client.spot.rest.model.AggTradesResponse;
@@ -21,8 +22,10 @@ import java.util.List;
 public class PriceController {
 
     private final SymbolService symbolService;
+    // Сохраняет в БД
     private final PriceSnapshotService priceSnapshotService;
-    private final BinanceServiceExamples binanceService;
+    // Обертка над методами библиотеки с нужними return-ами
+    private final BinanceService binanceService;
 
     @GetMapping("/symbols")
     public ResponseEntity<List<SymbolDto>> allSymbols() {
@@ -31,9 +34,9 @@ public class PriceController {
         return ResponseEntity.ok(symbols.stream().map(SymbolDto::of).toList());
     }
 
+    // етот ендпоинт не сохраняет ничего в репозиторий он получает и отдает
     @GetMapping("/prices/{symbol}/latest")
     public ResponseEntity<PriceDto> getLatestPrice(@PathVariable String symbol) {
-        System.out.println("CONTROLLER getLatestPrice: ...");
         Symbol byFind = symbolService.findBySymbol(symbol);
         PriceSnapshot latestPrice = priceSnapshotService.findLatestPrice(byFind.getSymbol());
         return ResponseEntity.ok(PriceDto.of(latestPrice));
@@ -48,4 +51,9 @@ public class PriceController {
         return ResponseEntity.ok(listDto);
     }
 
+    @GetMapping("/prices/{symbol}/avg")
+    public ResponseEntity<AvgPriceResponseDto> getAveragePrice(@PathVariable String symbol) {
+        AvgPriceResponseDto avgPriceResponseDto = binanceService.avgPriceDto(symbol);
+        return ResponseEntity.ok(avgPriceResponseDto);
+    }
 }
