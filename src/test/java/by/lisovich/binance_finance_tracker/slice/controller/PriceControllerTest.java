@@ -73,12 +73,24 @@ public class PriceControllerTest {
     }
 
     @Test
-    public void GetAveragePrice_WhenSymbolInvalid_Returns404() throws Exception {
+    public void getAveragePrice_WhenSymbolInvalid_Returns404() throws Exception {
         String symbol = "INVALID";
 
         when(symbolService.findBySymbol(symbol))
                 .thenThrow(new SymbolNotFoundException("Symbol " + symbol + " is not valid."));
         mockMvc.perform(get("/api/prices/" + symbol + "/avg"))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    public void getAveragePrice_WhenBinanceFails_Return500() throws Exception {
+        String symbol = "BNBUSDT";
+
+        when(binanceService.retriveAvgPrice(symbol))
+                .thenThrow(new RuntimeException("Binance API error"));
+
+        mockMvc.perform(get("/api/prices/" + symbol + "/avg"))
+                .andExpect(status().isInternalServerError());
+
     }
 }
