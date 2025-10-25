@@ -53,7 +53,9 @@ public class PriceController {
 
     @GetMapping("/prices/{symbol}/avg")
     public ResponseEntity<AvgPriceResponseDto> getAveragePrice(@PathVariable String symbol) {
-        AvgPriceResponseDto avgPriceResponseDto = binanceService.avgPriceDto(symbol);
+        symbolService.findBySymbol(symbol);
+
+        AvgPriceResponseDto avgPriceResponseDto = binanceService.retriveAvgPrice(symbol);
         return ResponseEntity.ok(avgPriceResponseDto);
     }
 }
