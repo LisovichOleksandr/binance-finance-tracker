@@ -1,6 +1,7 @@
 package by.lisovich.binance_finance_tracker.service;
 
 import by.lisovich.binance_finance_tracker.entity.Symbol;
+import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
 import by.lisovich.binance_finance_tracker.repository.SymbolRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -20,6 +21,6 @@ public class SymbolService {
 
     public Symbol findBySymbol(String symbol) {
         return symbolRepository.findBySymbol(symbol)
-                .orElseThrow(() -> new IllegalStateException("symbol don`t exist: " + symbol));
+                .orElseThrow(() -> new SymbolNotFoundException("Symbol " + symbol + " is not valid."));
     }
 }

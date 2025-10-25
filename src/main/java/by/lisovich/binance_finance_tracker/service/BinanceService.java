@@ -19,7 +19,9 @@ public class BinanceService {
 
     private final BinanceConfig binanceConfig;
 
-    public AvgPriceResponseDto avgPriceDto(String symbol) {
+    public AvgPriceResponseDto retriveAvgPrice(String symbol) {
+
+
         AvgPriceResponse data = binanceConfig.connectSpot().avgPrice(symbol).getData();
 
         return new AvgPriceResponseDto(symbol,symbol, data.getMins(), data.getPrice(), data.getCloseTime());
