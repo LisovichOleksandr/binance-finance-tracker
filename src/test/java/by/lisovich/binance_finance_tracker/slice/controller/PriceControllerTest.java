@@ -1,6 +1,7 @@
 package by.lisovich.binance_finance_tracker.slice.controller;
 
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.DeptResponseDto;
 import by.lisovich.binance_finance_tracker.controller.PriceController;
 import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
 import by.lisovich.binance_finance_tracker.security.filter.JwtAuthenticationFilter;
@@ -21,6 +22,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
@@ -65,7 +68,7 @@ public class PriceControllerTest {
         ResultActions response = mockMvc.perform(get("/api/prices/" + symbol + "/avg")
                 .contentType(MediaType.APPLICATION_JSON));
 
-        response.andExpect(MockMvcResultMatchers.status().isOk())
+        response.andExpect(status().isOk())
                 .andExpect(jsonPath("$.sSymbol").value("BNBUSDT"))
                 .andExpect(jsonPath("$.price").value("1108.68091085"));
 
@@ -91,6 +94,32 @@ public class PriceControllerTest {
 
         mockMvc.perform(get("/api/prices/" + symbol + "/avg"))
                 .andExpect(status().isInternalServerError());
+    }
+
+    @Test
+    public void getDepth_SendRequestToBinance_ReturnOrderBookDept() throws Exception {
+        // Given
+        String symbol = "BNBUSDT";
+        Integer limit = 100; //default
+
+        DeptResponseDto deptResponseDto = new DeptResponseDto(symbol, 1027024L,
+                List.of(List.of("4.00000000", "431.00000000")), List.of(List.of("4.00000200", "12.00000000")));
+        when(binanceService.getDept(symbol, limit)).thenReturn(deptResponseDto);
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "dept"));
+
+        //then
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$.symbol").value("BNBUSDT"));
+        perform.andExpect(jsonPath("$.lastUpdateId").value("1027024"));
+        perform.andExpect(jsonPath("$.bids").isArray());
+        perform.andExpect(jsonPath("$.bids[0]").isArray());
+        perform.andExpect(jsonPath("$.bids[0][0]").value("4.00000000"));
+        perform.andExpect(jsonPath("$.bids[0][1]").value("431.00000000"));
+        perform.andExpect(jsonPath("$.bids[1][0]").value("4.00000200"));
+        perform.andExpect(jsonPath("$.bids[1][1]").value("12.00000000"));
 
     }
+
 }
