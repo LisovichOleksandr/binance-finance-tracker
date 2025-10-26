@@ -2,7 +2,7 @@ package by.lisovich.binance_finance_tracker.service;
 
 import by.lisovich.binance_finance_tracker.binance.BinanceConfig;
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.DeptResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
 import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.spot.rest.model.*;
 import lombok.RequiredArgsConstructor;
@@ -57,10 +57,10 @@ public class BinanceService {
     }
 
 
-    public DeptResponseDto getDept(String symbol, Integer limit) {
+    public DepthResponseDto getDept(String symbol, Integer limit) {
         ApiResponse<DepthResponse> depth = binanceConfig.connectSpot().depth(symbol, limit);
 
-        return new DeptResponseDto(symbol,
+        return new DepthResponseDto(symbol,
                 depth.getData().getLastUpdateId(),
                 depth.getData().getBids(),
                 depth.getData().getAsks()

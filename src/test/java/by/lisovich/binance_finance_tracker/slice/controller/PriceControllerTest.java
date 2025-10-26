@@ -1,7 +1,7 @@
 package by.lisovich.binance_finance_tracker.slice.controller;
 
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.DeptResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
 import by.lisovich.binance_finance_tracker.controller.PriceController;
 import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
 import by.lisovich.binance_finance_tracker.security.filter.JwtAuthenticationFilter;
@@ -21,12 +21,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.ResultActions;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -102,12 +101,12 @@ public class PriceControllerTest {
         String symbol = "BNBUSDT";
         Integer limit = 100; //default
 
-        DeptResponseDto deptResponseDto = new DeptResponseDto(symbol, 1027024L,
+        DepthResponseDto depthResponseDto = new DepthResponseDto(symbol, 1027024L,
                 List.of(List.of("4.00000000", "431.00000000")), List.of(List.of("4.00000200", "12.00000000")));
-        when(binanceService.getDept(symbol, limit)).thenReturn(deptResponseDto);
+        when(binanceService.getDept(symbol, limit)).thenReturn(depthResponseDto);
 
         // when
-        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "dept"));
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/depth"));
 
         //then
         perform.andExpect(status().isOk());
@@ -117,8 +116,10 @@ public class PriceControllerTest {
         perform.andExpect(jsonPath("$.bids[0]").isArray());
         perform.andExpect(jsonPath("$.bids[0][0]").value("4.00000000"));
         perform.andExpect(jsonPath("$.bids[0][1]").value("431.00000000"));
-        perform.andExpect(jsonPath("$.bids[1][0]").value("4.00000200"));
-        perform.andExpect(jsonPath("$.bids[1][1]").value("12.00000000"));
+        perform.andExpect(jsonPath("$.asks[0][0]").value("4.00000200"));
+        perform.andExpect(jsonPath("$.asks[0][1]").value("12.00000000"));
+
+        verify(binanceService, times(1)).getDept(any(), any());
 
     }
 

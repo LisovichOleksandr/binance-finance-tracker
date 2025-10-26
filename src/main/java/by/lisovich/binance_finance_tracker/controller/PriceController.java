@@ -2,6 +2,7 @@ package by.lisovich.binance_finance_tracker.controller;
 
 import by.lisovich.binance_finance_tracker.binance.dto.AggTradesResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
 import by.lisovich.binance_finance_tracker.controller.dto.PriceDto;
 import by.lisovich.binance_finance_tracker.controller.dto.SymbolDto;
 import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
@@ -88,5 +89,13 @@ public class PriceController {
      * Алготрейдинг и боты
      * Боты постоянно запрашивают этот endpoint, чтобы видеть в реальном времени, как меняются заявки, и быстро реагировать.
      * */
+    @GetMapping("/prices/{symbol}/depth")
+    public ResponseEntity<DepthResponseDto> getDepth(@PathVariable String symbol, @RequestParam(defaultValue = "100") String limit) {
+
+        DepthResponseDto dept = binanceService.getDept(symbol, Integer.valueOf(limit));
+
+        return ResponseEntity.ok(dept);
+    }
+
 
 }
