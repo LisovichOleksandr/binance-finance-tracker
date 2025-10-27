@@ -3,13 +3,16 @@ package by.lisovich.binance_finance_tracker.service;
 import by.lisovich.binance_finance_tracker.binance.BinanceConfig;
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
 import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.spot.rest.model.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -65,5 +68,12 @@ public class BinanceService {
                 depth.getData().getBids(),
                 depth.getData().getAsks()
                 );
+    }
+
+    public List<TradesResponseDto> getTrades(String symbol, Integer limit) {
+        GetTradesResponse trades = binanceConfig.connectSpot().getTrades(symbol, limit).getData();
+
+        return trades.stream().map(r -> new TradesResponseDto(symbol, r.getId(), r.getPrice(), r
+                .getQty(), r.getQuoteQty(), r.getTime(), r.getIsBuyerMaker(), r.getIsBestMatch())).toList();
     }
 }

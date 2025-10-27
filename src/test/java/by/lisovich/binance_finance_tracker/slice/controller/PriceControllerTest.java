@@ -2,6 +2,7 @@ package by.lisovich.binance_finance_tracker.slice.controller;
 
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
 import by.lisovich.binance_finance_tracker.controller.PriceController;
 import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
 import by.lisovich.binance_finance_tracker.security.filter.JwtAuthenticationFilter;
@@ -97,7 +98,7 @@ public class PriceControllerTest {
 
     @Test
     public void getDepth_SendRequestToBinance_ReturnOrderBookDept() throws Exception {
-        // Given
+        // given
         String symbol = "BNBUSDT";
         Integer limit = 100; //default
 
@@ -119,8 +120,64 @@ public class PriceControllerTest {
         perform.andExpect(jsonPath("$.asks[0][0]").value("4.00000200"));
         perform.andExpect(jsonPath("$.asks[0][1]").value("12.00000000"));
 
+        verify(symbolService, times(1)).findBySymbol(symbol);
         verify(binanceService, times(1)).getDept(any(), any());
-
     }
+
+    @Test
+    public void getTrades_shouldSendRequestToBinance_ReturnTradesResponseDtoAnd200() throws Exception {
+        String symbol = "BNBUSDT";
+        Integer limitDefault = 500;
+        TradesResponseDto tradesResponseDto = new TradesResponseDto(symbol,
+                28457L, "4.00000100", "12.00000000", "48.000012",
+                1499865549590L, true, true);
+
+        when(binanceService.getTrades(symbol, limitDefault)).thenReturn(List.of(tradesResponseDto));
+
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/trades"));
+
+        System.out.println(perform.andReturn().getResponse().getContentAsString());
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$").isArray());
+
+
+        verify(symbolService, times(1)).findBySymbol(symbol);
+        verify(binanceService, times(1)).getTrades(any(), any());
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 }
