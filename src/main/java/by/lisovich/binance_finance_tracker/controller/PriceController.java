@@ -1,9 +1,6 @@
 package by.lisovich.binance_finance_tracker.controller;
 
-import by.lisovich.binance_finance_tracker.binance.dto.AggTradesResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.*;
 import by.lisovich.binance_finance_tracker.controller.dto.PriceDto;
 import by.lisovich.binance_finance_tracker.controller.dto.SymbolDto;
 import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
@@ -12,6 +9,7 @@ import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
 import com.binance.connector.client.spot.rest.model.AggTradesResponse;
+import jakarta.persistence.criteria.CriteriaBuilder;
 import lombok.RequiredArgsConstructor;
 import org.assertj.core.util.introspection.Introspection;
 import org.springframework.http.ResponseEntity;
@@ -199,6 +197,16 @@ public class PriceController {
         List<TradesResponseDto> trades = binanceService.getTrades(symbol, Integer.valueOf(limit));
 
         return ResponseEntity.ok(trades);
+    }
+
+    @GetMapping("/prices/{symbol}/historical-trades")
+    public ResponseEntity<List<HistoricalTradesResponseDto>> getHistoricalTrades(@PathVariable String symbol,
+                                                                                 @RequestParam(defaultValue = "500") Integer limit,
+                                                                                 @RequestParam(defaultValue = "1") Long fromId) {
+        symbolService.findBySymbol(symbol);
+        List<HistoricalTradesResponseDto> historicalTrades = binanceService.getHistoricalTrades(symbol, limit, fromId);
+
+        return ResponseEntity.ok(historicalTrades);
     }
 
 }

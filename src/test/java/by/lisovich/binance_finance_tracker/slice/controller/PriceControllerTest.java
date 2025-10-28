@@ -2,6 +2,7 @@ package by.lisovich.binance_finance_tracker.slice.controller;
 
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.HistoricalTradesResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
 import by.lisovich.binance_finance_tracker.controller.PriceController;
 import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
@@ -145,6 +146,34 @@ public class PriceControllerTest {
         verify(binanceService, times(1)).getTrades(any(), any());
     }
 
+    @Test
+    public void getHistoricalTradesEndpoint_ShouldReturnExpectedResponse() throws Exception {
+        //given
+        String symbol = "BNBUSDT";
+        Integer limitDefault = 500;
+        Long fromId = 1L;
+        HistoricalTradesResponseDto trade1 = new HistoricalTradesResponseDto("BNBUSDT",
+                28457L,"4.00000100","12.00000000","48.000012",
+                1499865549590L,true,true);
+        HistoricalTradesResponseDto trade2 = new HistoricalTradesResponseDto("BTCUSDT",
+                51234L,"67500.50000000","0.00200000","135.00100000",
+                1699865549123L,false,true);
+
+
+//        doNothing().when(symbolService).findBySymbol(symbol);
+        when(binanceService.getHistoricalTrades(symbol, limitDefault, fromId)).thenReturn(List.of(trade1, trade2));
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/historical-trades"));
+
+        //then
+        perform.andExpect(status().isOk());
+        perform.andExpect(jsonPath("$").isArray());
+//        perform.andExpect(jsonPath())
+
+        verify(symbolService, times(1)).findBySymbol(symbol);
+        verify(binanceService, times(1)).getHistoricalTrades(any(), any(), any());
+    }
 
 
 

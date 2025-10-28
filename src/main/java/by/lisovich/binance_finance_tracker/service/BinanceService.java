@@ -3,6 +3,7 @@ package by.lisovich.binance_finance_tracker.service;
 import by.lisovich.binance_finance_tracker.binance.BinanceConfig;
 import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.HistoricalTradesResponseDto;
 import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
 import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.spot.rest.model.*;
@@ -75,5 +76,15 @@ public class BinanceService {
 
         return trades.stream().map(r -> new TradesResponseDto(symbol, r.getId(), r.getPrice(), r
                 .getQty(), r.getQuoteQty(), r.getTime(), r.getIsBuyerMaker(), r.getIsBestMatch())).toList();
+    }
+
+    public List<HistoricalTradesResponseDto> getHistoricalTrades(String symbol, Integer limit, Long fromId) {
+        ApiResponse<HistoricalTradesResponse> apiResponse = binanceConfig.connectSpot()
+                .historicalTrades(symbol, limit, fromId);
+
+        return apiResponse.getData().stream()
+                .map(t -> new HistoricalTradesResponseDto(symbol,
+                        t.getId(), t.getPrice(),t.getQty(), t.getQuoteQty(),
+                        t.getTime(), t.getIsBuyerMaker(), t.getIsBestMatch())).toList();
     }
 }
