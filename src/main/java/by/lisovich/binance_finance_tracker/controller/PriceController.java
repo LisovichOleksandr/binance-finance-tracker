@@ -9,10 +9,12 @@ import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
 import com.binance.connector.client.spot.rest.model.AggTradesResponse;
-import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.Positive;
 import lombok.RequiredArgsConstructor;
-import org.assertj.core.util.introspection.Introspection;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -20,6 +22,7 @@ import java.util.List;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping("/api")
+@Validated
 public class PriceController {
 
     private final SymbolService symbolService;
@@ -201,8 +204,8 @@ public class PriceController {
 
     @GetMapping("/prices/{symbol}/historical-trades")
     public ResponseEntity<List<HistoricalTradesResponseDto>> getHistoricalTrades(@PathVariable String symbol,
-                                                                                 @RequestParam(defaultValue = "500") Integer limit,
-                                                                                 @RequestParam(defaultValue = "1") Long fromId) {
+                                                                                 @RequestParam(defaultValue = "500") @Min(1) @Max(1000) Integer limit,
+                                                                                 @RequestParam(defaultValue = "1") @Positive Long fromId) {
         symbolService.findBySymbol(symbol);
         List<HistoricalTradesResponseDto> historicalTrades = binanceService.getHistoricalTrades(symbol, limit, fromId);
 

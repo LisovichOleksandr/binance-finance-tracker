@@ -29,8 +29,7 @@ import java.util.List;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(
         controllers = PriceController.class,
@@ -147,7 +146,7 @@ public class PriceControllerTest {
     }
 
     @Test
-    public void getHistoricalTradesEndpoint_ShouldReturnExpectedResponse() throws Exception {
+    public void givenSymbolAndParams_WhenGetHistoricalTrades_ThenReturnExpectedResponse() throws Exception {
         //given
         String symbol = "BNBUSDT";
         Integer limitDefault = 500;
@@ -168,32 +167,15 @@ public class PriceControllerTest {
 
         //then
         perform.andExpect(status().isOk());
+        perform.andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON));
         perform.andExpect(jsonPath("$").isArray());
+        perform.andExpect(jsonPath("$.length()").value(2));
         perform.andExpect(jsonPath("$[0].symbol").value("BNBUSDT"));
         perform.andExpect(jsonPath("$[1].qty").value("0.00200000"));
 
         verify(symbolService, times(1)).findBySymbol(symbol);
         verify(binanceService, times(1)).getHistoricalTrades(any(), any(), any());
     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
