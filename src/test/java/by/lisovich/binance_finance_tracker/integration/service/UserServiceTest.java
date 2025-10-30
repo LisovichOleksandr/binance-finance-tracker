@@ -43,7 +43,7 @@ class UserServiceTest {
         //then
         assertThat(userFromService).isNotNull();
         assertThat(userFromService.getEmail()).isEqualTo(email);
-        assertThat(userFromService.getUsername()).isEqualTo("testUser");
+        assertThat(userFromService.getUsername()).isEqualTo("test-user@email.com");
         verify(userRepository, Mockito.times(1)).findByEmail(anyString());
     }
 
@@ -70,7 +70,7 @@ class UserServiceTest {
 
         // then
         assertThat(userFromDb.getId()).isEqualTo(1L);
-        assertThat(userFromDb.getUsername()).isEqualTo("testUser");
+        assertThat(userFromDb.getUsername()).isEqualTo("test-user@email.com");
         assertThat(userFromDb.getEmail()).isEqualTo(email);
         assertThat(userFromDb.getPasswordHash()).isNotEqualTo("pass");
 

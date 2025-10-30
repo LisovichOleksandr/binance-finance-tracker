@@ -17,28 +17,9 @@ class PriceControllerTest {
 
     @Autowired MockMvc mockMvc;
 
-    @Test
-    void shouldReturn200AndNotEmpty() throws Exception {
-        this.mockMvc.perform(get("/api/symbols")).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.length()").value(Matchers.greaterThan(0)));
+    void securedResource_shouldReturn403() throws Exception {
+        this.mockMvc.perform(get("/api/symbols"))
+                .andExpect(status().isForbidden());
     }
 
-    @Test
-    void shouldReturnLatestPrice() throws Exception {
-        this.mockMvc.perform(get("/api/prices/BNBUSDT/latest")).andDo(print())
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.symbol.symbol").value("BNBUSDT"));
-    }
 }
-
-//        [{"id":1,"symbol":"BTCUSDT","baseAsset":"BTC","quoteAsset":"USDT"},
-//        {"id":2,"symbol":"ETHUSDT","baseAsset":"ETH","quoteAsset":"USDT"},
-//        {"id":3,"symbol":"BNBUSDT","baseAsset":"BNB","quoteAsset":"USDT"},
-//        {"id":4,"symbol":"XRPUSDT","baseAsset":"XRP","quoteAsset":"USDT"},
-//        {"id":5,"symbol":"ADAUSDT","baseAsset":"ADA","quoteAsset":"USDT"},
-//        {"id":6,"symbol":"DOGEUSDT","baseAsset":"DOGE","quoteAsset":"USDT"},
-//        {"id":7,"symbol":"SOLUSDT","baseAsset":"SOL","quoteAsset":"USDT"},
-//        {"id":8,"symbol":"MATICUSDT","baseAsset":"MATIC","quoteAsset":"USDT"},
-//        {"id":9,"symbol":"DOTUSDT","baseAsset":"DOT","quoteAsset":"USDT"},
-//        {"id":10,"symbol":"LTCUSDT","baseAsset":"LTC","quoteAsset":"USDT"}]

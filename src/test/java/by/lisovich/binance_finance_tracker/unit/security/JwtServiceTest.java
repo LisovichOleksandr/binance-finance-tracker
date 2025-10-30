@@ -1,5 +1,6 @@
 package by.lisovich.binance_finance_tracker.unit.security;
 
+import by.lisovich.binance_finance_tracker.entity.Role;
 import by.lisovich.binance_finance_tracker.entity.User;
 import by.lisovich.binance_finance_tracker.security.JwtService;
 import io.jsonwebtoken.Claims;
@@ -8,13 +9,14 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.security.core.userdetails.UserDetails;
 
-import javax.crypto.SecretKey;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.security.Key;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -37,9 +39,11 @@ class JwtServiceTest {
 
         userDetails = User.builder()
                 .username("testUser")
+                .roles(Set.of(Role.builder().role("ROLE-USER").build()))
                 .passwordHash("pass")
                 .email("test@email.li")
                 .build();
+
     }
 
     @Test
@@ -66,7 +70,7 @@ class JwtServiceTest {
 
     @Test
     void shouldExtractClaims() {
-        String token = jwtService.generateToken(Map.of("role", "ADMIN"), userDetails);
+        String token = jwtService.generateToken(new HashMap<>(Map.of("role", "ADMIN")), userDetails);
 
         Claims claims = jwtService.extractAllClaims(token);
 

@@ -169,7 +169,8 @@ public class PriceControllerTest {
         //then
         perform.andExpect(status().isOk());
         perform.andExpect(jsonPath("$").isArray());
-//        perform.andExpect(jsonPath())
+        perform.andExpect(jsonPath("$[0].symbol").value("BNBUSDT"));
+        perform.andExpect(jsonPath("$[1].qty").value("0.00200000"));
 
         verify(symbolService, times(1)).findBySymbol(symbol);
         verify(binanceService, times(1)).getHistoricalTrades(any(), any(), any());
