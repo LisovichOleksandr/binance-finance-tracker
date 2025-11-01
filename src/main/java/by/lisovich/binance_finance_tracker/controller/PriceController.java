@@ -9,6 +9,7 @@ import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
 import com.binance.connector.client.spot.rest.model.AggTradesResponse;
+import com.binance.connector.client.spot.rest.model.Interval;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
@@ -226,6 +227,25 @@ public class PriceController {
  * объём торгов.
  * Binance возвращает массив таких свечей.
  * */
+    @GetMapping("/prices/{symbol}/klines")
+    public ResponseEntity<List<KlinesItemDto>> getKlines(@PathVariable String symbol,
+                                                         @RequestParam(required = false, defaultValue = "1m") String interval,
+                                                         @RequestParam(required = false, defaultValue = "0") Long startTime,
+                                                         @RequestParam(required = false, defaultValue = "0") Long endTime,
+                                                         @RequestParam(required = false, defaultValue = "100") Integer limit) {
+        if (startTime == 0)
+            startTime = System.currentTimeMillis() - 3600_000;
+        if (endTime == 0){
+            endTime = System.currentTimeMillis();
+        }
+        Interval intervalData = Interval.fromValue(interval);
+
+        symbolService.findBySymbol(symbol);
+        List<KlinesItemDto> klines = binanceService.getKlines(symbol, intervalData, startTime, endTime, limit);
+
+        return ResponseEntity.ok(klines);
+    }
+
 
 
 }

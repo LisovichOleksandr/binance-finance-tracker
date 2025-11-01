@@ -4,11 +4,11 @@ import by.lisovich.binance_finance_tracker.binance.dto.*;
 import by.lisovich.binance_finance_tracker.controller.PriceController;
 import by.lisovich.binance_finance_tracker.security.filter.JwtAuthenticationFilter;
 import by.lisovich.binance_finance_tracker.service.BinanceService;
+import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
 import com.binance.connector.client.spot.rest.model.Interval;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -45,6 +45,8 @@ public class PriceControllerGetKlinesTest {
     SymbolService symbolService;
     @MockitoBean
     BinanceService binanceService;
+    @MockitoBean
+    PriceSnapshotService priceSnapshotService;
     @Autowired
     ObjectMapper objectMapper;
 
@@ -83,7 +85,7 @@ public class PriceControllerGetKlinesTest {
     @Test
     public void givenValidRequest_whenGetKlines_thenReturnListKlinesItemDtoAnd200() throws Exception {
         //given
-        when(binanceService.getKlines(symbol, any(), any(), any(), any())).thenReturn(klinesItemDefDtos);
+        when(binanceService.getKlines(eq(symbol), any(), any(), any(), any())).thenReturn(klinesItemDefDtos);
 
         // when
         ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines"));
@@ -92,7 +94,7 @@ public class PriceControllerGetKlinesTest {
         perform.andExpect(status().isOk());
         perform.andExpect(content().contentType(MediaType.APPLICATION_JSON));
         perform.andExpect(jsonPath("$").isArray());
-        perform.andExpect(jsonPath("$.length").value(2));
+        perform.andExpect(jsonPath("$.length()").value(2));
         perform.andExpect(jsonPath("$[0].openTime").value("1609459200000"));
 
         List<KlinesItemDto> klines = objectMapper
@@ -121,7 +123,7 @@ public class PriceControllerGetKlinesTest {
     @Test
     public void givenCustomInterval_whenGetKlines_thenReturnCorrectData() throws Exception {
         // given
-        when(binanceService.getKlines(symbol, Interval.INTERVAL_5m, any(), any(), any())).thenReturn(klinesItem5mDtos);
+        when(binanceService.getKlines(eq(symbol), eq(Interval.INTERVAL_5m), any(), any(), any())).thenReturn(klinesItem5mDtos);
 
         // when
         ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines?symbol=5m"));
