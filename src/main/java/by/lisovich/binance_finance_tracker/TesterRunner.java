@@ -2,10 +2,14 @@ package by.lisovich.binance_finance_tracker;
 
 
 import by.lisovich.binance_finance_tracker.binance.BinanceConfig;
+import by.lisovich.binance_finance_tracker.binance.dto.KlinesItemDto;
+import by.lisovich.binance_finance_tracker.service.BinanceService;
 import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.spot.rest.api.SpotRestApi;
 import com.binance.connector.client.spot.rest.model.GetTradesResponse;
 import com.binance.connector.client.spot.rest.model.HistoricalTradesResponseInner;
+import com.binance.connector.client.spot.rest.model.Interval;
+import com.binance.connector.client.spot.rest.model.KlinesResponse;
 
 import java.util.List;
 
@@ -13,24 +17,16 @@ public class TesterRunner {
     public static void main(String[] args) {
 
         BinanceConfig binanceConfig = new BinanceConfig();
-        SpotRestApi spotRestApi = binanceConfig.connectSpot();
+        BinanceService binanceService = new BinanceService(binanceConfig);
 
-        ApiResponse<GetTradesResponse> response = spotRestApi.getTrades("BNBUSDT", 1000);
-        GetTradesResponse data = response.getData();
+        List<KlinesItemDto> bnbusdt = binanceService.getKlines(
+                "BNBUSDT",
+                Interval.INTERVAL_1m,
+                System.currentTimeMillis() - 3600_000L,
+                System.currentTimeMillis(),
+                100
+        );
 
-
-        long buyCount = data.stream().filter(t -> !t.getIsBuyerMaker()).count();
-        long sellCount = data.stream().filter(t -> t.getIsBuyerMaker()).count();
-        System.out.println("buy: " + buyCount + "\nsell: " + sellCount);
-
-        if (buyCount > sellCount * 1.2) {
-            System.out.println("Покупатели доминируют — рынок может расти");
-        } else if (buyCount < sellCount * 1.2) {
-            System.out.println("Продавцы доминируют — рынок может снижаться");
-        } else {
-            System.out.println("Баланс сил — боковой тренд");
-        }
-
-
+        System.out.println(bnbusdt);
     }
 }

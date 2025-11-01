@@ -1,10 +1,8 @@
 package by.lisovich.binance_finance_tracker.service;
 
 import by.lisovich.binance_finance_tracker.binance.BinanceConfig;
-import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.HistoricalTradesResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.*;
+import ch.qos.logback.core.read.ListAppender;
 import com.binance.connector.client.common.ApiResponse;
 import com.binance.connector.client.spot.rest.model.*;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +26,8 @@ public class BinanceService {
 
         return new AvgPriceResponseDto(symbol,symbol, data.getMins(), data.getPrice(), data.getCloseTime());
     }
+
+
 
     /**
      * Расшифровка полей:
@@ -86,5 +86,27 @@ public class BinanceService {
                 .map(t -> new HistoricalTradesResponseDto(symbol,
                         t.getId(), t.getPrice(),t.getQty(), t.getQuoteQty(),
                         t.getTime(), t.getIsBuyerMaker(), t.getIsBestMatch())).toList();
+    }
+
+    public List<KlinesItemDto> getKlines(String symbol, Interval interval, Long startTime, Long endTime, Integer limit) {
+        String timeZone = null;
+        ApiResponse<KlinesResponse> klines = binanceConfig.connectSpot().
+                klines(symbol, interval, startTime, endTime, timeZone, limit);
+
+        List<KlinesItemDto> dtos = klines.getData().stream().map(arr -> new KlinesItemDto(
+                Long.valueOf(arr.get(0)),
+                arr.get(1),
+                arr.get(2),
+                arr.get(3),
+                arr.get(4),
+                arr.get(5),
+                Long.valueOf(arr.get(6)),
+                arr.get(7),
+                Integer.valueOf(arr.get(8)),
+                arr.get(9),
+                arr.get(10),
+                arr.get(11)
+                )).toList();
+        return dtos;
     }
 }

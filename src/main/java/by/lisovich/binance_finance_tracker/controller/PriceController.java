@@ -48,7 +48,7 @@ public class PriceController {
 
     @GetMapping("/prices/{symbol}/agg-latest")
     public ResponseEntity<List<AggTradesResponseDto>> getLastAggTrades(@PathVariable String symbol,
-                                                                       @RequestParam(defaultValue = "1") Integer limit) {
+                                                                       @RequestParam(defaultValue = "1")  @Positive Integer limit) {
         AggTradesResponse aggTradesResponseInners = binanceService.aggTrades(symbol, limit);
 
         List<AggTradesResponseDto> listDto = AggTradesResponseDto.getListDto(symbol, symbol, aggTradesResponseInners);
@@ -89,7 +89,8 @@ public class PriceController {
      * Боты постоянно запрашивают этот endpoint, чтобы видеть в реальном времени, как меняются заявки, и быстро реагировать.
      * */
     @GetMapping("/prices/{symbol}/depth")
-    public ResponseEntity<DepthResponseDto> getDepth(@PathVariable String symbol, @RequestParam(defaultValue = "100") String limit) {
+    public ResponseEntity<DepthResponseDto> getDepth(@PathVariable String symbol,
+                                                     @RequestParam(defaultValue = "100") @Positive String limit) {
         // перевірка валідності символа.
 //        викидає помилку SymbolNotFoundException(), яка обробляється глобальним handleSymbolNotFoundException
         symbolService.findBySymbol(symbol);
@@ -211,5 +212,20 @@ public class PriceController {
 
         return ResponseEntity.ok(historicalTrades);
     }
+
+
+/**
+ * отправляет запрос к Binance Spot API, чтобы получить исторические данные о свечах (candlesticks)
+ * для конкретной торговой пары, например BNBUSDT.
+ * 🔹 Свеча (kline) — это данные о цене за определённый промежуток времени (интервал), и включает:
+ * время открытия свечи,
+ * цену открытия,
+ * максимальную цену,
+ * минимальную цену,
+ * цену закрытия,
+ * объём торгов.
+ * Binance возвращает массив таких свечей.
+ * */
+
 
 }

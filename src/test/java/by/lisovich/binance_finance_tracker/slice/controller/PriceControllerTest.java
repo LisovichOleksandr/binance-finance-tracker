@@ -1,16 +1,15 @@
 package by.lisovich.binance_finance_tracker.slice.controller;
 
-import by.lisovich.binance_finance_tracker.binance.dto.AvgPriceResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.DepthResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.HistoricalTradesResponseDto;
-import by.lisovich.binance_finance_tracker.binance.dto.TradesResponseDto;
+import by.lisovich.binance_finance_tracker.binance.dto.*;
 import by.lisovich.binance_finance_tracker.controller.PriceController;
 import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
 import by.lisovich.binance_finance_tracker.security.filter.JwtAuthenticationFilter;
 import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -177,7 +176,68 @@ public class PriceControllerTest {
         verify(binanceService, times(1)).getHistoricalTrades(any(), any(), any());
     }
 
+    @Test
+    public void givenNegativeParam_WhenGetHistoricalTrades_ThenReturn400() throws Exception {
+        //given
+        String symbol = "BNBUSDT";
+        Integer limitDefault = 500;
+        Long fromId = 1L;
+        HistoricalTradesResponseDto trade1 = new HistoricalTradesResponseDto("BNBUSDT",
+                28457L,"4.00000100","12.00000000","48.000012",
+                1499865549590L,true,true);
+        HistoricalTradesResponseDto trade2 = new HistoricalTradesResponseDto("BTCUSDT",
+                51234L,"67500.50000000","0.00200000","135.00100000",
+                1699865549123L,false,true);
 
+
+        when(binanceService.getHistoricalTrades(symbol, limitDefault, fromId)).thenReturn(List.of(trade1, trade2));
+
+        //when
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/historical-trades")
+                .param("fromId", "-4"));
+
+        //then
+        perform.andExpect(status().isBadRequest());
+    }
+
+    @Test
+    public void givenValidRequest_whenGetKlines_thenReturnListKlinesItemDtoAnd200() throws Exception {
+        //given
+        String symbol = "BNBUSDT";
+
+        KlinesItemDto klinesItemDto = new KlinesItemDto(
+                1609459200000L, "28923.63", "28950.00", "28923.63", "28930.24", "12.345",
+                1609459260000L, "356789.12", 154, "6.789", "195678.44", "0"
+        );
+
+        KlinesItemDto klinesItemDto1 = new KlinesItemDto(
+                1609459260000L, "28930.24", "28960.55", "28910.10", "28950.12", "10.982",
+                1609459320000L, "318452.77", 143, "4.551", "132551.11", "0"
+        );
+
+        when(binanceService.getKlines(any(), any(), any(), any(), any())).thenReturn(List.of(klinesItemDto, klinesItemDto1));
+
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines"));
+
+        // then
+        perform.andExpect(status().isOk());
+        perform.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+        perform.andExpect(jsonPath("$").isArray());
+        perform.andExpect(jsonPath("$.length").value(2));
+        perform.andExpect(jsonPath("$[0].openTime").value("1609459200000"));
+
+        List<KlinesItemDto> klines = objectMapper
+                .readValue(perform.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
+        for (KlinesItemDto kline : klines) {
+            long interval = kline.closeTime() - kline.openTime();
+            Assertions.assertThat(interval)
+                    .as("Checking that the candle is a minute candle")
+                    .isBetween(59_000L, 61_000L);
+        }
+
+        verify(binanceService, times(1)).getKlines(any(), any(), any(), any(), any());
+    }
 
 
 
