@@ -24,6 +24,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -49,20 +50,33 @@ public class PriceControllerGetKlinesTest {
 
     String symbol = "BNBUSDT";
     private List<KlinesItemDto> klinesItemDefDtos = new ArrayList<>();
+    private List<KlinesItemDto> klinesItem5mDtos = new ArrayList<>();
 
     @BeforeEach
     public void init() {
-        KlinesItemDto klinesItemDto = new KlinesItemDto(
+        KlinesItemDto klines1m_1 = new KlinesItemDto(
                 1609459200000L, "28923.63", "28950.00", "28923.63", "28930.24", "12.345",
                 1609459260000L, "356789.12", 154, "6.789", "195678.44", "0"
         );
 
-        KlinesItemDto klinesItemDto1 = new KlinesItemDto(
+        KlinesItemDto klines1m_2 = new KlinesItemDto(
                 1609459260000L, "28930.24", "28960.55", "28910.10", "28950.12", "10.982",
                 1609459320000L, "318452.77", 143, "4.551", "132551.11", "0"
         );
-        klinesItemDefDtos.add(klinesItemDto);
-        klinesItemDefDtos.add(klinesItemDto1);
+        klinesItemDefDtos.add(klines1m_1);
+        klinesItemDefDtos.add(klines1m_2);
+
+        KlinesItemDto klines5m_1 = new KlinesItemDto(
+                1609459200000L, "28923.63", "28980.00", "28900.00", "28950.24", "25.678",
+                1609459500000L, "745123.55", 421, "12.456", "389551.22", "0"
+        );
+
+        KlinesItemDto klines5m_2 = new KlinesItemDto(
+                1609459500000L, "28950.24", "29010.55", "28920.10", "28990.12", "30.982",
+                1609459800000L, "912452.77", 502, "15.551", "455112.11", "0"
+        );
+        klinesItem5mDtos.add(klines5m_1);
+        klinesItem5mDtos.add(klines5m_2);
     }
 
 
@@ -85,7 +99,7 @@ public class PriceControllerGetKlinesTest {
                 .readValue(perform.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
         for (KlinesItemDto kline : klines) {
             long interval = kline.closeTime() - kline.openTime();
-            Assertions.assertThat(interval)
+            assertThat(interval)
                     .as("Checking that the candle is a minute candle")
                     .isBetween(59_000L, 61_000L);
         }
@@ -107,12 +121,25 @@ public class PriceControllerGetKlinesTest {
     @Test
     public void givenCustomInterval_whenGetKlines_thenReturnCorrectData() throws Exception {
         // given
-        when(binanceService.getKlines(symbol, Interval.INTERVAL_5m, any(), any(), any())).thenReturn();
+        when(binanceService.getKlines(symbol, Interval.INTERVAL_5m, any(), any(), any())).thenReturn(klinesItem5mDtos);
 
         // when
         ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines?symbol=5m"));
 
         //then
+
+        perform.andExpect(status().isOk());
+        perform.andExpect(content().contentType(MediaType.APPLICATION_JSON));
+
+        List<KlinesItemDto> klines = objectMapper
+                .readValue(perform.andReturn().getResponse().getContentAsString(), new TypeReference<>() {});
+
+        for (KlinesItemDto kline : klines) {
+            long interval = kline.closeTime() - kline.openTime();
+            assertThat(interval)
+                    .as("Checking that correct interval")
+                    .isBetween(299_000L, 301_000L);
+        }
     }
 
 
