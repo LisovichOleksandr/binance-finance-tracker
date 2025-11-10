@@ -1,5 +1,6 @@
 package by.lisovich.binance_finance_tracker.controller;
 
+import by.lisovich.binance_finance_tracker.exception.IntervalNotFoundException;
 import by.lisovich.binance_finance_tracker.exception.SymbolNotFoundException;
 import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.HttpStatus;
@@ -15,6 +16,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SymbolNotFoundException.class)
     public ResponseEntity<String> handleSymbolNotFoundException(SymbolNotFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
+    }
+
+    @ExceptionHandler(IntervalNotFoundException.class)
+    public ResponseEntity<String> handleIntervalNotFoundException(IntervalNotFoundException ex) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ex.getMessage());
     }
 

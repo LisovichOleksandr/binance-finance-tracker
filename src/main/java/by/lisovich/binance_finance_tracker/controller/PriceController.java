@@ -5,6 +5,7 @@ import by.lisovich.binance_finance_tracker.controller.dto.PriceDto;
 import by.lisovich.binance_finance_tracker.controller.dto.SymbolDto;
 import by.lisovich.binance_finance_tracker.entity.PriceSnapshot;
 import by.lisovich.binance_finance_tracker.entity.Symbol;
+import by.lisovich.binance_finance_tracker.exception.IntervalNotFoundException;
 import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import by.lisovich.binance_finance_tracker.service.SymbolService;
@@ -238,7 +239,12 @@ public class PriceController {
         if (endTime == 0){
             endTime = System.currentTimeMillis();
         }
-        Interval intervalData = Interval.fromValue(interval);
+        Interval intervalData;
+        try {
+            intervalData = Interval.fromValue(interval);
+        } catch (IllegalArgumentException ex) {
+            throw new IntervalNotFoundException(ex.getMessage());
+        }
 
         symbolService.findBySymbol(symbol);
         List<KlinesItemDto> klines = binanceService.getKlines(symbol, intervalData, startTime, endTime, limit);

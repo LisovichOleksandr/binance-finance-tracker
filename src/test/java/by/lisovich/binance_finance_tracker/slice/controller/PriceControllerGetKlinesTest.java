@@ -30,6 +30,18 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * getKlines_DefaultRequest_Returns200AndList()
+ * getKlines_WithCustomInterval_ReturnsCorrectData()
+ * getKlines_WithStartTimeAndEndTime_ReturnsFilteredData()
+ * getKlines_WithLimit_ReturnsExactSize()
+ * getKlines_InvalidSymbol_Returns404()
+ * getKlines_InvalidLimit_Returns400()
+ * getKlines_InvalidInterval_Returns400()
+ * getKlines_BinanceServiceUnavailable_Returns500()
+ * getKlines_AllParamsCombined_ReturnsCorrectData()
+ * */
+
 @WebMvcTest(
         controllers = PriceController.class,
         excludeFilters = @ComponentScan.Filter(
@@ -107,6 +119,7 @@ public class PriceControllerGetKlinesTest {
         }
 
         verify(binanceService, times(1)).getKlines(any(), any(), any(), any(), any());
+        verify(symbolService, times(1)).findBySymbol(eq(symbol));
     }
 
     /**
@@ -126,7 +139,7 @@ public class PriceControllerGetKlinesTest {
         when(binanceService.getKlines(eq(symbol), eq(Interval.INTERVAL_5m), any(), any(), any())).thenReturn(klinesItem5mDtos);
 
         // when
-        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines?symbol=5m"));
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines?interval=5m"));
 
         //then
 
@@ -144,15 +157,14 @@ public class PriceControllerGetKlinesTest {
         }
     }
 
+    @Test
+    public void givenInvalidInterval_whenGetKlines_thenReturn400() throws Exception {
+        // when
+        ResultActions perform = mockMvc.perform(get("/api/prices/" + symbol + "/klines?interval=inCorrectValue"));
 
-
-
-
-
-
-
-
-
+        // then
+        perform.andExpect(status().isNotFound());
+    }
 
 
 }
