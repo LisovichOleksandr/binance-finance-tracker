@@ -16,11 +16,11 @@ public class HistoryKlines {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "interval_id", nullable = false)
     private Interval interval;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "id", nullable = false)
+    @JoinColumn(name = "symbol_id", nullable = false)
     private Symbol symbol;
 
     @Column(name = "open_time")

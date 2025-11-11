@@ -2,12 +2,11 @@ package by.lisovich.binance_finance_tracker;
 
 
 import by.lisovich.binance_finance_tracker.binance.BinanceServiceExamples;
+import by.lisovich.binance_finance_tracker.entity.Interval;
 import by.lisovich.binance_finance_tracker.entity.Role;
 import by.lisovich.binance_finance_tracker.entity.Symbol;
 import by.lisovich.binance_finance_tracker.entity.User;
-import by.lisovich.binance_finance_tracker.repository.PriceSnapshotRepository;
-import by.lisovich.binance_finance_tracker.repository.SymbolRepository;
-import by.lisovich.binance_finance_tracker.repository.UserRepository;
+import by.lisovich.binance_finance_tracker.repository.*;
 import by.lisovich.binance_finance_tracker.service.BinanceService;
 import by.lisovich.binance_finance_tracker.service.PriceSnapshotService;
 import com.binance.connector.client.spot.rest.api.AccountApi;
@@ -25,14 +24,17 @@ import java.util.Set;
 @AllArgsConstructor
 public class BinanceExampleTester implements CommandLineRunner {
 
-    private final BinanceServiceExamples binanceService;
+    private final IntervalRepository intervalRepository;
+    private final HistoryKlinesRepository historyKlinesRepository;
+
 
     @Override
     public void run(String... args) throws Exception {
 
-//        AggTradesResponse response = binanceService.aggTrades();
+        List<Interval> all = intervalRepository.findAll();
+        System.out.println("*******> GEt Interval s >>");
+//        System.out.println(all);
 
-//        for (AggTradesResponseInner aggTradesResponseInner : response) {
-//            System.out.println("Id = "+aggTradesResponseInner);
-        }
+
+    }
     }

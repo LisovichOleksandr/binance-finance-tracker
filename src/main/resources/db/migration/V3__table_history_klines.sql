@@ -25,7 +25,7 @@ INSERT INTO t_interval (period) VALUES
 CREATE TABLE history (
     id BIGSERIAL PRIMARY KEY,
     symbol_id BIGINT NOT NULL REFERENCES symbols(id),
-    interval BIGINT NOT NULL REFERENCES t_interval(id),
+    interval_id BIGINT NOT NULL REFERENCES t_interval(id),
     open_time TIMESTAMP,
     open_price DECIMAL(18,8),
     high_price DECIMAL(18,8),
