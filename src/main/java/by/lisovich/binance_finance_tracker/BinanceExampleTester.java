@@ -33,7 +33,7 @@ public class BinanceExampleTester implements CommandLineRunner {
 
         List<Interval> all = intervalRepository.findAll();
         System.out.println("*******> GEt Interval s >>");
-//        System.out.println(all);
+        System.out.println(all);
 
 
     }

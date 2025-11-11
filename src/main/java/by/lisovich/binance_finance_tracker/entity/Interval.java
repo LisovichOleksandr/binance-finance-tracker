@@ -1,5 +1,6 @@
 package by.lisovich.binance_finance_tracker.entity;
 
+import by.lisovich.binance_finance_tracker.entity.converter.CandleIntervalConverter;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -11,7 +12,7 @@ public class Interval {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "period", nullable = false, unique = true, length = 10)
+    @Convert(converter = CandleIntervalConverter.class)
     private CandleInterval period;
 }
