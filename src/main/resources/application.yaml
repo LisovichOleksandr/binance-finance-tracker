@@ -11,6 +11,7 @@ spring:
     locations:
       classpath: db/migrations
     baselineOnMigrate: true
+    debug: true
 
 
   security:
